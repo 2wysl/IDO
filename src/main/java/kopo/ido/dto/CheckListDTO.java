@@ -1,5 +1,5 @@
 package kopo.ido.dto;
 
 public class CheckListDTO {
-    private String test1;
+    private String test;
 }

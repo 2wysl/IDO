@@ -2,17 +2,30 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <!--    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/wow/wow.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="/lib/wow/wow.min.js"></script>
+    <script src="/lib/easing/easing.min.js"></script>
+    <script src="/lib/waypoints/waypoints.min.js"></script>
+    <script src="/lib/owlcarousel/owl.carousel.min.js"></script>
 
     <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+    <script src="/js/main.js"></script>
 
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        function execDaumPostcode() {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    let address = data.address;
+                    let zonecode = data.zonecode;
+                    document.getElementById("zipp_code_id").value = zonecode;
+                    document.getElementById("UserAdd1").value = address;
+                }
+            }).open();
+        }
+    </script>
+
     <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -89,7 +102,7 @@
                 });
         }
     </script>
-
+    <script src="/javascript/popup_2.js"></script>
 
 
     <meta charset="utf-8">
@@ -104,7 +117,8 @@
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@600&family=Lobster+Two:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@600&family=Lobster+Two:wght@700&display=swap"
+          rel="stylesheet">
 
     <!-- Icon Font Stylesheet -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -229,21 +243,22 @@
             font-size: 40px;
 
         }
-        /*#UserAdd2::placeholder {*/
-        /*    color: #fa6848;*/
-        /*}*/
+
+        /*// #UserAdd2::placeholder*/
+        /*//     color: #fa6848;*/
+
     </style>
 
 </head>
 <body>
 <div class="container-xxl bg-white p-0">
     <!-- Spinner Start -->
-<!--    <div id="spinner"-->
-<!--         class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">-->
-<!--        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">-->
-<!--            <span class="sr-only">Loading...</span>-->
-<!--        </div>-->
-<!--    </div>-->
+    <!--    <div id="spinner"-->
+    <!--         class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">-->
+    <!--        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">-->
+    <!--            <span class="sr-only">Loading...</span>-->
+    <!--        </div>-->
+    <!--    </div>-->
     <!-- Spinner End -->
 
 
@@ -252,9 +267,9 @@
         <a href="IDOindex.html" class="navbar-brand">
             <!--            <h1 class="m-0 text-primary"><i class="fa fa-book-reader me-3"></i>Kider</h1>-->
 
-            <a href="IDOindex.html" class="IDOLogo"><img src="/img/IDOLogo.png"
-                                                         style="width:180px; margin-left: 7%; margin-right: 50%;"
-                                                         alt="IDOLOGO"></a>
+            <a href="/main" class="IDOLogo"><img src="/img/IDOLogo.png"
+                                                 style="width:180px; margin-left: 7%; margin-right: 50%;"
+                                                 alt="IDOLOGO"></a>
         </a>
         <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
@@ -264,11 +279,11 @@
         <div class="collapse navbar-collapse" id="navbarCollapse" style="width: 100%;">
             <div class="navbar-nav mx-auto">
                 <!--                <a href="IDOindex.html" class="nav-item nav-link active">홈</a>-->
-                <a href="IDOindex.html" class="nav-item nav-link" id="Home-Button"
+                <a href="/main" class="nav-item nav-link" id="Home-Button"
                    style="font-family: 'Katuri'; font-size: 25px;">홈</a>
                 <a href="about.html" class="nav-item nav-link" id="Class-Button"
                    style="font-family: 'Katuri';font-size: 25px;">수업</a>
-                <a href="classes.html" class="nav-item nav-link" id="Contact-Button"
+                <a href="/user/intro" class="nav-item nav-link" id="Contact-Button"
                    style="font-family: 'Katuri';font-size: 25px;">소개</a>
 
 
@@ -286,7 +301,7 @@
                 <!--                <a href="contact.html" class="nav-item nav-link">Contact Us</a>-->
             </div>
             <!--            <a href="" class="btn btn-primary rounded-pill px-3 d-none d-lg-block">Join Us<i class="fa fa-arrow-right ms-3"></i></a>-->
-            <a href="IDOLogin.html"
+            <a href="/user/login"
                style="background-color: #0d6efd; color:#FFFFFF; font-family: 'Katuri'; font-size: 25px; border-radius:15px; width: 8%; height: 8%; text-align: center; margin-right: 7%;">로그인</a>
         </div>
 
@@ -331,7 +346,8 @@
                         </div>
                         <br>
                         <div class="login-input" style="display: flex; align-items: center;">
-                            <input type="text" name="email" id="user_email" class="align-left" required placeholder="이메일 입력"
+                            <input type="text" name="email" id="user_email" class="align-left" required
+                                   placeholder="이메일 입력"
                                    style="width:260px; height: 50px; border-radius:10px; border: none; margin-right: 10px; font-family: 'TmoneyRoundWindExtraBold';">
                             <!--            <span id="middle"><small>@</small></span>-->
                             <!--            <select id="email_address" name="email_address" title="이메일 선택" class="email_address" style="width:100px; height: 50px; border-radius:10px; border: none; margin-left: 10px; margin-right: 10px;">-->
@@ -355,18 +371,18 @@
                                    maxlength="10"
                                    placeholder="우편번호"
                                    style="width:210px; height: 50px; border-radius:10px; border: none; display: inline;font-family: 'TmoneyRoundWindExtraBold';">
-<!--                            <button type="button" id="zipp_btn" class="btn btn-primary" onclick="execDaumPostcode()"-->
-<!--                                   value="우편번호 찾기"-->
-<!--                                    style="height: 50px; width:100px;border-radius:10px;color:#000000; margin-left: 5px;font-family: 'TmoneyRoundWindExtraBold';  background-color: #FFFFFF"></button><br>-->
+                            <!--                            <button type="button" id="zipp_btn" class="btn btn-primary" onclick="execDaumPostcode()"-->
+                            <!--                                   value="우편번호 찾기"-->
+                            <!--                                    style="height: 50px; width:100px;border-radius:10px;color:#000000; margin-left: 5px;font-family: 'TmoneyRoundWindExtraBold';  background-color: #FFFFFF"></button><br>-->
 
                             <button type="button" id="zipp_btn" class="mem_addres" onclick="execDaumPostcode()"
                                     style="height: 50px; border-radius:10px; margin-left: 10px;font-family: 'TmoneyRoundWindExtraBold';  background-color: #FFFFFF;color:#0d6efd; border:2px solid #0d6efd;">
                                 우편번호 찾기
                             </button>
-                            <input type="text" class="form-control" name="user_add1" id="UserAdd1" maxlength="40"
+                            <input type="text" class="form-control" name="address" id="UserAdd1" maxlength="40"
                                    placeholder="기본 주소를 입력하세요" required
                                    style="width:140px; height: 50px; border-radius:10px; border: none; display: inline;font-family: 'TmoneyRoundWindExtraBold';">
-                            <input type="text" class="form-control2" name="address" id="UserAdd2" maxlength="40"
+                            <input type="text" class="form-control2" name="dt_addr" id="UserAdd2" maxlength="40"
                                    placeholder="상세 주소를 입력하세요"
                                    style="width:185px; height: 50px; border-radius:10px; border: none; margin-left: 12px; display: inline;font-family: 'TmoneyRoundWindExtraBold';">
                         </div>
@@ -383,8 +399,10 @@
         </div>
     </div>
 </div>
+
 <!-- Footer Start -->
-<div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s" style="width:100%;">
+<div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s"
+     style="width:100%;">
 
     <div class="container">
 

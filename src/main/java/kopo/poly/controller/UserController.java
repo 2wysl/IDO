@@ -126,7 +126,9 @@ public class UserController {
             String password = CmmUtil.nvl(request.getParameter("password")); //비밀번호
             String email = CmmUtil.nvl(request.getParameter("email")); //이메일
             String post_code = CmmUtil.nvl(request.getParameter("post_code")); //우편번호
-            String address = CmmUtil.nvl(request.getParameter("address")); //상세주소
+            String address = CmmUtil.nvl(request.getParameter("address")); //주소
+            String dt_addr = CmmUtil.nvl(request.getParameter("dt_addr")); //상세주소
+
             /*
              * #######################################################
              *        웹(회원정보 입력화면)에서 받는 정보를 String 변수에 저장 끝!!
@@ -146,6 +148,7 @@ public class UserController {
             log.info("email : " + email);
             log.info("post_code : " + post_code);
             log.info("address : " + address);
+            log.info("dt_addr : " + dt_addr);
 
             /*
              * #######################################################
@@ -168,6 +171,8 @@ public class UserController {
 
             pDTO.setPost_code(post_code);
             pDTO.setAddress(address);
+            pDTO.setDt_addr(dt_addr);
+
 
             /*
              * #######################################################

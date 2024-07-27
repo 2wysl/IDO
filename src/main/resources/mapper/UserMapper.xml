@@ -9,12 +9,14 @@
          PASSWORD,
          EMAIL,
          POST_CODE,
-         ADDRESS)
+         ADDRESS,
+         DT_ADDR)
         VALUES (#{user_id},
                 #{password},
                 #{email},
                 #{post_code},
-                #{address})
+                #{address},
+                #{dt_addr})
     </insert>
 
 <!--    <select id="checkIdExists" parameterType="String" resultType="int">-->

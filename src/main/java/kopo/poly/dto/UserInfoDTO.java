@@ -11,5 +11,5 @@ public class UserInfoDTO {
     private String email;
     private String post_code;
     private String address;
-
+    private String dt_addr;
 }

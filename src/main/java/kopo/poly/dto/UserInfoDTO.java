@@ -1,4 +1,4 @@
-package kopo.ido.dto;
+package kopo.poly.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,10 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserInfoDTO {
-    private String userId;
+    private String user_id;
     private String password;
     private String email;
-    private String postCode;
-    private String addr;
+    private String post_code;
+    private String address;
 
 }

@@ -1,6 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let f = document.getElementById("f"); // form 태그
+            $("#btnAddr").on("click", function () {
+                kakaoPost(f);
+            });
+        });
+
+        function kakaoPost(f) {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    let address = data.address;
+                    let zonecode = data.zonecode;
+                    f.addr1.value = "(" + zonecode + ")" + address;
+                }
+            }).open();
+        }
+
+        function doSubmit(f) {
+            if (f.user_id.value === "") {
+                alert("아이디를 입력하세요.");
+                f.user_id.focus();
+                return false;
+            }
+            if (f.user_name.value === "") {
+                alert("이름을 입력하세요.");
+                f.user_name.focus();
+                return false;
+            }
+            if (f.password.value === "") {
+                alert("비밀번호를 입력하세요.");
+                f.password.focus();
+                return false;
+            }
+            if (f.password2.value === "") {
+                alert("비밀번호확인을 입력하세요.");
+                f.password2.focus();
+                return false;
+            }
+            if (f.password.value !== f.password2.value) {
+                alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+                f.password.focus();
+                return false;
+            }
+            if (f.email.value === "") {
+                alert("이메일을 입력하세요.");
+                f.email.focus();
+                return false;
+            }
+            if (f.addr1.value === "") {
+                alert("주소를 입력하세요.");
+                f.addr1.focus();
+                return false;
+            }
+            if (f.addr2.value === "") {
+                alert("상세주소를 입력하세요.");
+                f.addr2.focus();
+                return false;
+            }
+            return true;
+        }
+
+        function checkUserId() {
+            const userId = document.getElementById('userId').value;
+            fetch(`/user/checkId?userId=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        alert('ID가 이미 존재합니다.');
+                    } else {
+                        alert('사용 가능한 ID입니다.');
+                    }
+                });
+        }
+    </script>
+
+
+
     <meta charset="utf-8">
     <title>Kider - Preschool Website Template</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -219,10 +310,10 @@
 
                     <!--        <button id="signup" type="button" style="margin-top: 15px; width: 192px; height: 32px; flex-shrink: 0; border-radius: 50px; border: 1px solid #000; background: #54A1FC; box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);">전송</button>-->
                     <!--    </form>-->
-                    <form id="f">
+                    <form action="/user/joinProc" method="post" onsubmit="return doSubmit(this)" id="f">
 
                         <div class="login-input">
-                            <input name="userId" placeholder="아이디" id="userId" type="text"
+                            <input name="user_id" placeholder="아이디" id="userId" type="text"
                                    style=" width:238px; height: 50px; border-radius:10px; border: none; margin-right: 10px;font-family: 'TmoneyRoundWindExtraBold';">
                             <button type="button" class="mem_ID" id="ID-Check-Btn"
                                     style="height: 50px; border-radius:10px; margin-left: 10px;font-family: 'TmoneyRoundWindExtraBold';  background-color: #FFFFFF;color:#0d6efd; border:2px solid #0d6efd;">
@@ -231,16 +322,16 @@
                         </div>
                         <br>
                         <div class="login-input">
-                            <input name="userPassword" placeholder="비밀번호" id="userPassword" type="password"
+                            <input name="password" placeholder="비밀번호" id="userPassword" type="password"
                                    style="width:340px; height: 50px; border-radius:10px; border: none; font-family: 'TmoneyRoundWindExtraBold';">
                         </div>
                         <div class="login-input">
-                            <input name="userPassword" placeholder="비밀번호 확인" id="userPassword2" type="password"
+                            <input name="password2" placeholder="비밀번호 확인" id="userPassword2" type="password"
                                    style="width:340px; height: 50px; border-radius:10px; border: none; margin-top: 20px; font-family: 'TmoneyRoundWindExtraBold';">
                         </div>
                         <br>
                         <div class="login-input" style="display: flex; align-items: center;">
-                            <input type="text" id="user_email" class="align-left" required placeholder="이메일 입력"
+                            <input type="text" name="email" id="user_email" class="align-left" required placeholder="이메일 입력"
                                    style="width:260px; height: 50px; border-radius:10px; border: none; margin-right: 10px; font-family: 'TmoneyRoundWindExtraBold';">
                             <!--            <span id="middle"><small>@</small></span>-->
                             <!--            <select id="email_address" name="email_address" title="이메일 선택" class="email_address" style="width:100px; height: 50px; border-radius:10px; border: none; margin-left: 10px; margin-right: 10px;">-->
@@ -260,7 +351,7 @@
 
                         <div class="adressInput">
                             <label for="zipp_btn" class="form-label"> </label><br/>
-                            <input type="text" class="form-control mb-2" id="zipp_code_id" name="zipp_code"
+                            <input type="text" class="form-control mb-2" id="zipp_code_id" name="post_code"
                                    maxlength="10"
                                    placeholder="우편번호"
                                    style="width:210px; height: 50px; border-radius:10px; border: none; display: inline;font-family: 'TmoneyRoundWindExtraBold';">
@@ -275,12 +366,12 @@
                             <input type="text" class="form-control" name="user_add1" id="UserAdd1" maxlength="40"
                                    placeholder="기본 주소를 입력하세요" required
                                    style="width:140px; height: 50px; border-radius:10px; border: none; display: inline;font-family: 'TmoneyRoundWindExtraBold';">
-                            <input type="text" class="form-control2" name="user_add2" id="UserAdd2" maxlength="40"
+                            <input type="text" class="form-control2" name="address" id="UserAdd2" maxlength="40"
                                    placeholder="상세 주소를 입력하세요"
                                    style="width:185px; height: 50px; border-radius:10px; border: none; margin-left: 12px; display: inline;font-family: 'TmoneyRoundWindExtraBold';">
                         </div>
 
-                        <button id="signup" type="button"
+                        <button id="signup" type="submit"
                                 style="margin-top: 15px;  width: 260px; height: 55px; flex-shrink: 0; border-radius: 50px; border: none; background: #0d6efd; box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);font-family: 'TmoneyRoundWindExtraBold'; font-size:25px; margin-top: 40px; display: flex; justify-content: center; align-items:center; margin-left:9%;">
                             회원가입
                         </button>
@@ -327,15 +418,6 @@
 <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 </div>
 
-<!-- JavaScript Libraries -->
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="lib/wow/wow.min.js"></script>
-<script src="lib/easing/easing.min.js"></script>
-<script src="lib/waypoints/waypoints.min.js"></script>
-<script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
-<!-- Template Javascript -->
-<script src="js/main.js"></script>
 </body>
 </html>

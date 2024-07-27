@@ -1,4 +1,4 @@
-package kopo.ido.service;
+package kopo.poly.service;
 
 public interface IClassService {
 }

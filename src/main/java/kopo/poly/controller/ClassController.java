@@ -1,4 +1,4 @@
-package kopo.ido.controller;
+package kopo.poly.controller;
 
 public class ClassController {
 }

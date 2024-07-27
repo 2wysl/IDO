@@ -9,15 +9,18 @@
          PASSWORD,
          EMAIL,
          POST_CODE,
-         ADDR)
+         ADDRESS)
         VALUES (#{user_id},
                 #{password},
                 #{email},
                 #{post_code},
-                #{addr},
-                #{user_id},
-                SYSDATE,
-                #{user_id},
-                SYSDATE)
+                #{address})
     </insert>
+
+    <select id="checkIdExists" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM USER_INFO
+        WHERE USER_ID = #{userId}
+    </select>
+
 </mapper>

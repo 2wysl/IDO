@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>redirect</title>
+</head>
+<body>
+<script th:inline="javascript">
+  window.onload = function () {
+    let msg = /*[[${msg}]]*/ '다시 시도해주세요.';
+    let url = /*[[${url}]]*/ '/main';
+    alert(msg);
+    location.href=url;
+  }
+</script>
+<meta charset="UTF-8">
+</body>
+</html>
+

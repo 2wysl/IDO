@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 화면</title>
+    <link rel="stylesheet" href="/css/table.css"/>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            let f = document.getElementById("f"); // form 태그
+            $("#btnAddr").on("click", function () {
+                kakaoPost(f);
+            });
+        });
+
+        function kakaoPost(f) {
+            new daum.Postcode({
+                oncomplete: function (data) {
+                    let address = data.address;
+                    let zonecode = data.zonecode;
+                    f.addr1.value = "(" + zonecode + ")" + address;
+                }
+            }).open();
+        }
+
+        function doSubmit(f) {
+            if (f.user_id.value === "") {
+                alert("아이디를 입력하세요.");
+                f.user_id.focus();
+                return false;
+            }
+            if (f.user_name.value === "") {
+                alert("이름을 입력하세요.");
+                f.user_name.focus();
+                return false;
+            }
+            if (f.password.value === "") {
+                alert("비밀번호를 입력하세요.");
+                f.password.focus();
+                return false;
+            }
+            if (f.password2.value === "") {
+                alert("비밀번호확인을 입력하세요.");
+                f.password2.focus();
+                return false;
+            }
+            if (f.password.value !== f.password2.value) {
+                alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+                f.password.focus();
+                return false;
+            }
+            if (f.email.value === "") {
+                alert("이메일을 입력하세요.");
+                f.email.focus();
+                return false;
+            }
+            if (f.addr1.value === "") {
+                alert("주소를 입력하세요.");
+                f.addr1.focus();
+                return false;
+            }
+            if (f.addr2.value === "") {
+                alert("상세주소를 입력하세요.");
+                f.addr2.focus();
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+<h2>회원 가입하기</h2>
+<hr/>
+<br/>
+<form action="/user/insertUserInfo" method="post" onsubmit="return doSubmit(this)" id="f">
+    <div class="divTable minimalistBlack">
+        <div class="divTableBody">
+            <div class="divTableRow">
+                <div class="divTableCell">* 아이디</div>
+                <div class="divTableCell">
+                    <input type="text" name="user_id" style="width:80%" placeholder="아이디"/>
+                </div>
+            </div>
+            <div class="divTableRow">
+                <div class="divTableCell">* 이름</div>
+                <div class="divTableCell">
+                    <input type="text" name="user_name" style="width:95%" placeholder="이름"/>
+                </div>
+            </div>
+            <div class="divTableRow">
+                <div class="divTableCell">* 비밀번호</div>
+                <div class="divTableCell">
+                    <input type="password" name="password" style="width:95%" placeholder="비밀번호"/>
+                </div>
+            </div>
+            <div class="divTableRow">
+                <div class="divTableCell">* 비밀번호확인</div>
+                <div class="divTableCell">
+                    <input type="password" name="password2" style="width:95%" placeholder="비밀번호 확인"/>
+                </div>
+            </div>
+            <div class="divTableRow">
+                <div class="divTableCell">* 이메일</div>
+                <div class="divTableCell">
+                    <input type="email" name="email" style="width:40%" placeholder="이메일주소"/>
+                </div>
+            </div>
+            <div class="divTableRow">
+                <div class="divTableCell">* 주소</div>
+                <div class="divTableCell">
+                    <input type="text" name="addr1" style="width:85%" placeholder="주소"/>
+                    <button id="btnAddr" type="button">우편번호</button>
+                </div>
+            </div>
+            <div class="divTableRow">
+                <div class="divTableCell">* 상세 주소</div>
+                <div class="divTableCell">
+                    <input type="text" name="addr2" style="width:95%" placeholder="상세주소"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button type="submit">회원가입</button>
+    </div>
+</form>
+</body>
+</html>

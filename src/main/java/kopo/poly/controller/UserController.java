@@ -1,10 +1,12 @@
-package kopo.ido.controller;
+package kopo.poly.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import kopo.ido.dto.CheckListDTO;
-import kopo.ido.dto.MsgDTO;
-import kopo.ido.dto.UserInfoDTO;
-import kopo.ido.service.IUserService;
+import kopo.poly.dto.CheckListDTO;
+import kopo.poly.dto.MsgDTO;
+import kopo.poly.dto.UserInfoDTO;
+import kopo.poly.service.IUserService;
+import kopo.poly.util.CmmUtil;
+import kopo.poly.util.EncryptUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -13,6 +15,9 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -21,32 +26,10 @@ public class UserController {
 
     private final IUserService userService;
 
-//    * @GetMapping
-//     *  Return값이 "url"인 컨트롤러
-//     *  ex) return "/user/userRegForm"
 
-    //1. 메인페이지 띄우는 컨트롤러 Main
-//    public class MainController {
-//
-//        @GetMapping("/main")
-//        public String main() throws Exception{
-//            log.info(this.getClass().getName()+".main 페이지 보여주는 함수 실행");
-//            return "/main";
-//        }
-//    }
-//
+    // 컨트롤러 파트
 
-    //2. 로그인창 띄우는 컨트롤러 Login
-    public class LoginController{
-
-        @GetMapping("/user/login")
-        public String login() throws Exception{
-            log.info(this.getClass().getName()+".login 페이지 보여주는 함수 실행");
-            return "/login";
-        }
-    }
-
-    //3. 회원가입창 띄우는 컨트롤러  Join
+    // 회원가입 띄우는 컨트롤러
     @GetMapping(value = "/user/join")
     public String join() {
         log.info(this.getClass().getName() + ".user/join");
@@ -54,33 +37,34 @@ public class UserController {
         return "/IDOSignUp";
     }
 
-    //4. 마이페이지 띄우는 컨트롤러 MyPage
+
+    // 로그인 띄우는 컨트롤러
+    @GetMapping("/user/login")
+    public String login() throws Exception {
+        log.info(this.getClass().getName() + ".login 페이지 보여주는 함수 실행");
+        return "/IDOLogin";
+    }
+
+
+    // 마이페이지 띄우는 컨트롤러
     @GetMapping(value = "/user/myPage")
     public String myPage() {
         log.info(this.getClass().getName() + ".user/myPage");
 
-        return "/user/mypage";
-    }
-
-    //5. 회원정보 수정페이지 띄우는 컨트롤러 Modify
-    @GetMapping(value = "/user/modify")
-    public String modify() {
-        log.info(this.getClass().getName() + ".user/modify");
-
-        return "/user/modify";
+        return "/IDOMyProfilePage";
     }
 
 
-    //6. 아이 체크리스트 띄우는 컨트롤러 Checklist
+    // 아이 체크리스트 띄우는 컨트롤러
     @GetMapping(value = "/user/checklist")
     public String checklist() {
         log.info(this.getClass().getName() + ".user/checklist");
 
-        return "/user/checklist";
+        return "/IDOChildInfoPage";
     }
 
 
-    //7. 아이디 찾는 페이지 띄우는 컨트롤러 FindId
+    // 아이디 찾는 페이지 띄우는 컨트롤러
     @GetMapping(value = "/user/findid")
     public String findid() {
         log.info(this.getClass().getName() + ".user/findid");
@@ -89,7 +73,7 @@ public class UserController {
     }
 
 
-    //8. 패스워드 찾는 페이지 띄우는 컨트롤러 FindPw
+    // 패스워드 찾는 페이지 띄우는 컨트롤러
     @GetMapping(value = "/user/findpw")
     public String findpw() {
         log.info(this.getClass().getName() + ".user/findpw");
@@ -98,24 +82,21 @@ public class UserController {
     }
 
 
+    // 소개 페이지 띄우는 컨트롤러
+    @GetMapping(value = "/user/intro")
+    public String intro() {
+        log.info(this.getClass().getName() + ".user/intro");
 
-
-//      * @PostMapping
-//     *  Return값이 int, DTO인 컨트롤러
-//     *  return rDTO;
-//     *  이 컨트롤러들은 ServiceInterface를 거쳐감
-//     *  DB와 통신을 하는 로직을 작성하는 컨트롤러
-//     *  클라이언트에서 값을 받아옴
-//     *  1. 아이디 중복확인 CheckId
-
-//     *  2. 이메일 인증   CheckEmail
+        return "/IDOIntro";
+    }
 
 
 
-//     *  3. 회원가입을 하는 로직  JoinProc
-    /**
-     * 회원가입 로직 처리
-     */
+
+
+    // 로직 파트
+
+    // 회원가입 로직
     @PostMapping(value = "/user/joinProc")
     public String joinProc(HttpServletRequest request, ModelMap model) throws Exception {
 
@@ -125,8 +106,7 @@ public class UserController {
         String url = ""; //회원가입 결과에 대한  URL을 전달할 변수
 
         //웹(회원정보 입력화면)에서 받는 정보를 저장할 변수
-//        UserInfoDTO pDTO = null;
-        UserInfoDTO pDTO = new UserInfoDTO();
+        UserInfoDTO pDTO = null;
 
         try {
 
@@ -137,11 +117,11 @@ public class UserController {
              *    무조건 웹으로 받은 정보는 DTO에 저장하기 위해 임시로 String 변수에 저장함
              * #######################################################
              */
-            String user_id = kopo.poly.util.CmmUtil.nvl(request.getParameter("user_id")); //아이디
-            String password = kopo.poly.util.CmmUtil.nvl(request.getParameter("password")); //비밀번호
-            String email = kopo.poly.util.CmmUtil.nvl(request.getParameter("email")); //이메일
-            String post_code = kopo.poly.util.CmmUtil.nvl(request.getParameter("post_code")); //우편번호
-            String addr = kopo.poly.util.CmmUtil.nvl(request.getParameter("addr2")); //상세주소
+            String user_id = CmmUtil.nvl(request.getParameter("user_id")); //아이디
+            String password = CmmUtil.nvl(request.getParameter("password")); //비밀번호
+            String email = CmmUtil.nvl(request.getParameter("email")); //이메일
+            String post_code = CmmUtil.nvl(request.getParameter("post_code")); //우편번호
+            String address = CmmUtil.nvl(request.getParameter("address")); //상세주소
             /*
              * #######################################################
              *        웹(회원정보 입력화면)에서 받는 정보를 String 변수에 저장 끝!!
@@ -160,7 +140,7 @@ public class UserController {
             log.info("password : " + password);
             log.info("email : " + email);
             log.info("post_code : " + post_code);
-            log.info("addr : " + addr);
+            log.info("address : " + address);
 
             /*
              * #######################################################
@@ -173,11 +153,16 @@ public class UserController {
             //웹(회원정보 입력화면)에서 받는 정보를 저장할 변수를 메모리에 올리기
             pDTO = new UserInfoDTO();
 
-            pDTO.setUserId(user_id);
-            pDTO.setPassword(password);
-            pDTO.setEmail(email);
-            pDTO.setPostCode(post_code);
-            pDTO.setAddr(addr);
+            pDTO.setUser_id(user_id);
+
+            //비밀번호는 절대로 복호화되지 않도록 해시 알고리즘으로 암호화
+            pDTO.setPassword(EncryptUtil.encHashSHA256(password));
+
+            //민감 정보인 이메일은 AES128-CBC로 암호화함
+            pDTO.setEmail(EncryptUtil.encAES128CBC(email));
+
+            pDTO.setPost_code(post_code);
+            pDTO.setAddress(address);
 
             /*
              * #######################################################
@@ -202,14 +187,12 @@ public class UserController {
                 msg = "오류로 인해 회원가입이 실패하였습니다.";
                 url = "/user/join";
             }
-        }
-        catch (DuplicateKeyException e){ //PK인 USER_ID가 중복되어 에러가 발생했다면
+        } catch (DuplicateKeyException e) { //PK인 USER_ID가 중복되어 에러가 발생했다면
             msg = "이미 가입된 아이디입니다. 다른 아이디로 변경 후 다시 시도해주세요.";
             url = "/user/join";
             log.info(e.toString());
             e.printStackTrace();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             //저장이 실패되면 사용자에게 보여줄 메시지
             msg = "시스템 오류로 실패하였습니다. 다시 시도해주세요.";
             url = "/user/join";
@@ -217,8 +200,8 @@ public class UserController {
             e.printStackTrace();
 
         } finally {
-            log.info("출력할 메세지 : "+msg);
-            log.info("이동할 경로 : "+url);
+            log.info("출력할 메세지 : " + msg);
+            log.info("이동할 경로 : " + url);
             model.addAttribute("msg", msg);
             model.addAttribute("url", url);
 
@@ -227,6 +210,23 @@ public class UserController {
 
         return "/redirect";
     }
+
+
+    // 아이디 중복확인 로직
+    @PostMapping(value = "/user/checkIdExists")
+    @ResponseBody
+    public boolean checkIdExists(@RequestParam("userId") String userId) {
+        return userService.isIdExists(userId);
+    }
+
+
+
+
+
+
+
+
+//     *  2. 이메일 인증   CheckEmail
 
 
 //     *  4. 회원정보 수정하는 로직 UserModifyProc
@@ -240,40 +240,35 @@ public class UserController {
 //     *  8. 히스토리 가져오는 로직 HistoryProc
 
 
-
-
-
     /**
-     * @GetMapping
-     *  Return값이 "url"인 컨트롤러
-     *  ex) return "/user/userRegForm"
-     *  1. 로그인창 띄우는 컨트롤러    Login
-     *  2. 회원가입창 띄우는 컨트롤러  Join
-     *  3. 마이페이지 띄우는 컨트롤러   MyPage
-     *  4. 회원정보 수정페이지 띄우는 컨트롤러  Modify
-     *  5. 아이 체크리스트 띄우는 컨트롤러    Checklist
-     *  6. 아이디/패스워드 찾는 페이지 띄우는 컨트롤러 FindId
-     *      FindPw
-     *  7. 메인페이지 띄우는 컨트롤러   Main
+     * @GetMapping Return값이 "url"인 컨트롤러
+     * ex) return "/user/userRegForm"
+     * 1. 로그인창 띄우는 컨트롤러    Login
+     * 2. 회원가입창 띄우는 컨트롤러  Join
+     * 3. 마이페이지 띄우는 컨트롤러   MyPage
+     * 4. 회원정보 수정페이지 띄우는 컨트롤러  Modify
+     * 5. 아이 체크리스트 띄우는 컨트롤러    Checklist
+     * 6. 아이디/패스워드 찾는 페이지 띄우는 컨트롤러 FindId
+     * FindPw
+     * 7. 메인페이지 띄우는 컨트롤러   Main
      *
-     * @PostMapping
-     *  Return값이 int, DTO인 컨트롤러
-     *  return rDTO;
-     *  이 컨트롤러들은 ServiceInterface를 거쳐감
-     *  DB와 통신을 하는 로직을 작성하는 컨트롤러
-     *  클라이언트에서 값을 받아옴
-     *  1. 아이디 중복확인 CheckId
-     *  2. 이메일 인증   CheckEmail
-     *  3. 회원가입을 하는 로직  JoinProc
-     *  4. 회원정보 수정하는 로직 UserModifyProc
-     *  5. 아이정보 수정하는 로직 ChildModifyProc
-     *  6. 회원탈퇴하는 로직    GoodByeUserProc
-     *  7. 체크리스트 저장하는 로직    ChecklistProc
-     *  8. 히스토리 가져오는 로직 HistoryProc
-     *
-     *  Model, Session
-     *
-     *  DTO를 Model에 .setAttribute()
+     * @PostMapping Return값이 int, DTO인 컨트롤러
+     * return rDTO;
+     * 이 컨트롤러들은 ServiceInterface를 거쳐감
+     * DB와 통신을 하는 로직을 작성하는 컨트롤러
+     * 클라이언트에서 값을 받아옴
+     * 1. 아이디 중복확인 CheckId
+     * 2. 이메일 인증   CheckEmail
+     * 3. 회원가입을 하는 로직  JoinProc
+     * 4. 회원정보 수정하는 로직 UserModifyProc
+     * 5. 아이정보 수정하는 로직 ChildModifyProc
+     * 6. 회원탈퇴하는 로직    GoodByeUserProc
+     * 7. 체크리스트 저장하는 로직    ChecklistProc
+     * 8. 히스토리 가져오는 로직 HistoryProc
+     * <p>
+     * Model, Session
+     * <p>
+     * DTO를 Model에 .setAttribute()
      */
 
     public MsgDTO checkId(Model model, String id) throws Exception {
@@ -285,6 +280,13 @@ public class UserController {
 
         return rDTO;
     }
+
+    //      * @PostMapping
+//     *  Return값이 int, DTO인 컨트롤러
+//     *  return rDTO;
+//     *  이 컨트롤러들은 ServiceInterface를 거쳐감
+//     *  DB와 통신을 하는 로직을 작성하는 컨트롤러
+//     *  클라이언트에서 값을 받아옴
 
     /*
         1. 화면에서 값을 받아온다.

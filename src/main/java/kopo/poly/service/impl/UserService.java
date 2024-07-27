@@ -1,9 +1,9 @@
-package kopo.ido.service.impl;
+package kopo.poly.service.impl;
 
-import kopo.ido.dto.MsgDTO;
-import kopo.ido.dto.UserInfoDTO;
-import kopo.ido.persistance.mapper.IUserMapper;
-import kopo.ido.service.IUserService;
+import kopo.poly.dto.MsgDTO;
+import kopo.poly.dto.UserInfoDTO;
+import kopo.poly.persistance.mapper.IUserMapper;
+import kopo.poly.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService implements IUserService {
 
-    private final IUserMapper userMapper;
+    private final IUserMapper userMapper; // 회원관련 SQL 사용하기 위한 Mapper 가져오기
+
 
     @Override
     public int joinProc(UserInfoDTO pDTO) throws Exception {
@@ -30,6 +31,12 @@ public class UserService implements IUserService {
         log.info(this.getClass().getName() + ".joinProc End!");
 
         return res;
+    }
+
+
+    public boolean isIdExists(String userId) {
+        int count = userMapper.checkIdExists(userId);
+        return count > 0;
     }
 
     @Override

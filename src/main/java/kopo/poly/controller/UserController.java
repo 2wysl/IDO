@@ -1,6 +1,7 @@
 package kopo.poly.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import kopo.poly.dto.CheckListDTO;
 import kopo.poly.dto.MsgDTO;
 import kopo.poly.dto.UserInfoDTO;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Optional;
 
 
 @Controller
@@ -41,7 +44,9 @@ public class UserController {
     // 로그인 띄우는 컨트롤러
     @GetMapping("/user/login")
     public String login() throws Exception {
-        log.info(this.getClass().getName() + ".login 페이지 보여주는 함수 실행");
+        log.info(this.getClass().getName() + ".user/login Start!");
+        log.info(this.getClass().getName() + ".user/login End!");
+
         return "/IDOLogin";
     }
 
@@ -213,12 +218,88 @@ public class UserController {
 
 
     // 아이디 중복확인 로직
-    @PostMapping(value = "/user/checkIdExists")
-    @ResponseBody
-    public boolean checkIdExists(@RequestParam("userId") String userId) {
-        return userService.isIdExists(userId);
-    }
+//    @PostMapping(value = "/user/checkIdExists")
+//    @ResponseBody
+//    public boolean checkIdExists(@RequestParam("userId") String userId) {
+//        return userService.isIdExists(userId);
+//    }
+//    @ResponseBody
+//    @PostMapping(value = "getUserIdExists")
+//    public UserInfoDTO getUserExists(HttpServletRequest request) throws Exception {
+//
+//        log.info(this.getClass().getName() + ".getUserIdExists Start!");
+//
+//        String user_id = CmmUtil.nvl(request.getParameter("user_id")); // 회원아이디
+//
+//        log.info("userId : " + user_id);
+//
+//        UserInfoDTO pDTO = new UserInfoDTO();
+//        pDTO.setUser_id(user_id);
+//
+//        // 회원아이디를 통해 중복된 아이디인지 조회
+//        UserInfoDTO rDTO = Optional.ofNullable(userService.getUserIdExists(pDTO)).orElseGet(UserInfoDTO::new);
+//
+//        log.info(this.getClass().getName() + ".getUserIdExists End!");
+//
+//        return rDTO;
+//    }
 
+    // 로그인 로직
+    @PostMapping(value = "/user/loginProc")
+    public String loginProc(HttpServletRequest request, ModelMap model, HttpSession session){
+        log.info(this.getClass().getName()+".loginProc Start!");
+
+        String msg=""; // 로그인 결과에 대한 메시지를 전달할 변수
+        String url="";
+        // 웹(회원정보 입력화면)에서 받는 정보를 저장할 변수
+        UserInfoDTO pDTO=null;
+
+        try{
+            String user_id=CmmUtil.nvl(request.getParameter("user_id"));
+            String password=CmmUtil.nvl(request.getParameter("password"));
+
+            log.info("user_id : " + user_id);
+            log.info("password : " + password);
+
+            // 입력 변수 메모리에 올리기
+            pDTO=new UserInfoDTO();
+
+            pDTO.setUser_id(user_id);
+
+            // 비번 알고리즘 복호화
+            pDTO.setPassword(EncryptUtil.encHashSHA256(password));
+            // 일치하는 지 확인하기 위한 서비스호출
+            UserInfoDTO rDTO=userService.getLogin(pDTO);
+
+            // 로그인 성공시, 회원아이디 정보를 세션에 저장
+            // 세션은 톰켓의 메모리에 존재, 웹사이트에 접속한 사람마다 메모리에 값 올림
+
+            if (CmmUtil.nvl(rDTO.getUser_id()).length()>0) { //로그인 성공
+                session.setAttribute("SS_USER_ID", user_id);
+
+                msg = "로그인이 성공했습니다. \n" + rDTO.getUser_id() + "님 환영합니다.";
+                url = "/main";
+
+            } else {
+                msg = "로그인에 실패하였습니다.";
+                url = "/user/login";
+            }
+
+
+
+        } catch (Exception e){
+            msg="시스템 문제로 로그인이 실패했습니다.";
+            log.info(e.toString());
+            e.printStackTrace();
+        }finally {
+            model.addAttribute("msg", msg);
+            model.addAttribute("url", url);
+
+            log.info(this.getClass().getName()+".loginProc End!");
+        }
+
+        return "/redirect";
+    }
 
 
 
@@ -271,15 +352,15 @@ public class UserController {
      * DTO를 Model에 .setAttribute()
      */
 
-    public MsgDTO checkId(Model model, String id) throws Exception {
-
-        MsgDTO rDTO = new MsgDTO();
-        CheckListDTO cDTO = new CheckListDTO();
-
-        rDTO = userService.checkId(id);
-
-        return rDTO;
-    }
+//    public MsgDTO checkId(Model model, String id) throws Exception {
+//
+//        MsgDTO rDTO = new MsgDTO();
+//        CheckListDTO cDTO = new CheckListDTO();
+//
+//        rDTO = userService.check_id(id);
+//
+//        return rDTO;
+//    }
 
     //      * @PostMapping
 //     *  Return값이 int, DTO인 컨트롤러

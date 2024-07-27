@@ -17,10 +17,19 @@
                 #{address})
     </insert>
 
-    <select id="checkIdExists" parameterType="String" resultType="int">
-        SELECT COUNT(*)
+<!--    <select id="checkIdExists" parameterType="String" resultType="int">-->
+<!--        SELECT COUNT(*)-->
+<!--        FROM USER_INFO-->
+<!--        WHERE USER_ID = #{userId}-->
+<!--    </select>-->
+
+    <select id="getLogin" parameterType="UserInfoDTO" resultType="UserInfoDTO">
+        SELECT USER_ID, PASSWORD, EMAIL, POST_CODE, ADDRESS
         FROM USER_INFO
-        WHERE USER_ID = #{userId}
+        WHERE USER_ID=#{user_id}
+        AND PASSWORD=#{password}
     </select>
+
+
 
 </mapper>

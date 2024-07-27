@@ -26,6 +26,9 @@ public interface IUserService {
 
     // 아이디 중복확인
 //     MsgDTO checkId(String id) throws Exception;
-    boolean isIdExists(String userId) throws Exception;
+//    boolean isIdExists(String userId) throws Exception;
+
+    // 로그인을 위해 아이디와 비밀번호가 일치하는지 확인하기
+    UserInfoDTO getLogin(UserInfoDTO pDTO) throws Exception;
 
 }

@@ -6,10 +6,12 @@ import kopo.poly.dto.CheckListDTO;
 import kopo.poly.dto.MsgDTO;
 import kopo.poly.dto.UserInfoDTO;
 import kopo.poly.service.IUserService;
+import kopo.poly.service.impl.UserService;
 import kopo.poly.util.CmmUtil;
 import kopo.poly.util.EncryptUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -310,8 +312,47 @@ public class UserController {
 
 
 
+// 회원 가입 전 아이디 중복체크(ajax를 통해 입력한 아이디 정보 받음)
+    @ResponseBody
+    @PostMapping(value = "/user/getUserIdExists")
+    public UserInfoDTO getUserExists(HttpServletRequest request) throws Exception{
+        log.info(this.getClass().getName()+".getUserIdExists Start!");
 
+        String user_id=CmmUtil.nvl(request.getParameter("user_id"));
 
+        log.info("user_id : " +user_id);
+
+        UserInfoDTO pDTO = new UserInfoDTO();
+        pDTO.setUser_id(user_id);
+
+        // 회원아이디를 통해 중복된 아이디인지 조회
+        UserInfoDTO rDTO=Optional.ofNullable(userService.getUserIdExists(pDTO)).orElseGet(UserInfoDTO::new);
+
+        log.info(this.getClass().getName()+".getUserIdExists End!");
+
+        return rDTO;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/user/getEmailExists")
+    public UserInfoDTO getEmailExists(HttpServletRequest request) throws Exception{
+
+        log.info(this.getClass().getName()+".getEmailExists Start!");
+
+        String email=CmmUtil.nvl(request.getParameter("email")); //회원아이디
+
+        log.info("email : " +email);
+
+        UserInfoDTO pDTO=new UserInfoDTO();
+        pDTO.setEmail(EncryptUtil.encAES128CBC(email));
+
+        // 입력된 이메일이 중복된 이메일인지 조회
+        UserInfoDTO rDTO=Optional.ofNullable(userService.getEmailExists(pDTO)).orElseGet(UserInfoDTO::new);
+
+        log.info(this.getClass().getName()+".getEmailExists End!");
+
+        return rDTO;
+    }
 //     *  2. 이메일 인증   CheckEmail
 
 

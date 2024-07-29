@@ -13,6 +13,14 @@
     <script src="/js/main.js"></script>
 
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script type="text/javascript">
+
+        // 아이디 중복체크여부 (중복 : y / 중복아님 : n )
+        let userIdCheck = "Y";
+
+        // 이메일 중복체크 인증번호 발송 값
+        let emailAuthNumber = "";
+    </script>
     <script>
         function execDaumPostcode() {
             new daum.Postcode({
@@ -28,12 +36,76 @@
 
     <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
+
         $(document).ready(function () {
             let f = document.getElementById("f"); // form 태그
             $("#btnAddr").on("click", function () {
                 kakaoPost(f);
             });
+
+            // 아이디 중복체크
+            $("#btnUserId").on("click", function () { // 버튼 클릭했을 때, 발생되는 이벤트 생성함(onclick 이벤트와 동일함)
+                userIdExists(f)
+
+            })
+
+            // 이메일 중복체크
+            $("#btnEmail").on("click", function () {
+                emailExists(f)
+            })
         });
+
+        function userIdExists(f) {
+
+            if (f.user_id.value === "") {
+                alert("아이디를 입력하세요.");
+                f.user_id.focus();
+                return;
+            }
+
+            $.ajax({
+                url: "/user/getUserIdExists",
+                type: "post", // 전송방식은 post
+                dataType: "JSON", // 전송 결과는 json으로 받기
+                data: $("#f").serialize(), // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
+                success: function (json) { // 호출이 성공했다면!
+
+                    if (json.exists_yn === "Y") {
+                        alert("이미 가입된 아이디가 존재합니다.");
+                        f.user_id.focus();
+
+                    } else {
+                        alert("가입 가능한 아이디입니다.");
+                        userIdCheck = "N";
+                    }
+                }
+            })
+        }
+
+        //이메일 중복 체크
+        function emailExists(f) {
+            if (f.email.value === "") {
+                alert("이메일을 입력하세요.");
+                f.email.focus();
+                return;
+            }
+            $.ajax({
+                    url: "/user/getEmailExists",
+                    type: "post",
+                    dataType: "JSON",
+                    data: $("#f").serialize(),
+                    success: function (json) {
+                        if (json.exist_yn === "Y") {
+                            alert("이미 가입된 이메일 주소가 존재합니다.");
+                            f.email.focus();
+                        } else {
+                            alert("이메일로 인증번호가 발송되었습니다. \n 받은 메일의 인증번호를 입력하기 바랍니다.");
+                            emailAuthNumber = json.authNumber;
+                        }
+                    }
+                }
+            )
+        }
 
         function kakaoPost(f) {
             new daum.Postcode({
@@ -51,11 +123,12 @@
                 f.user_id.focus();
                 return false;
             }
-            if (f.user_name.value === "") {
-                alert("이름을 입력하세요.");
-                f.user_name.focus();
+            if (userIdCheck !== "N") {
+                alert("아이디 중복 체크 및 중복되지 않은 아이디로 가입 바랍니다.");
+                f.user_id.focus();
                 return false;
             }
+
             if (f.password.value === "") {
                 alert("비밀번호를 입력하세요.");
                 f.password.focus();
@@ -76,6 +149,16 @@
                 f.email.focus();
                 return false;
             }
+            if (f.authNumber.value === "") {
+                alert("이메일 인증번호를 입력하세요.");
+                f.authNumber.focus();
+                return false;
+            }
+            if (f.authNumber.value != emailAuthNumber) {
+                alert("이메일 인증번호가 일치하지 않습니다.");
+                f.authNumber.focus();
+                return false;
+            }
             if (f.addr1.value === "") {
                 alert("주소를 입력하세요.");
                 f.addr1.focus();
@@ -86,8 +169,26 @@
                 f.addr2.focus();
                 return false;
             }
-            return true;
+
+
+            $.ajax({
+                    url: "/user/joinProc",
+                    type: "post",
+                    dataType: "JSON",
+                    data: $("#F").serialize(),
+                    success: function (json) {
+
+                        if (json.result === 1) {
+                            alert(json.msg);
+                            location.href = "/user/login";
+                        } else {
+                            alert(json.msg);
+                        }
+                    }
+                }
+            )
         }
+
 
         function checkUserId() {
             const userId = document.getElementById('userId').value;
@@ -304,8 +405,6 @@
             <a href="/user/login"
                style="background-color: #0d6efd; color:#FFFFFF; font-family: 'Katuri'; font-size: 25px; border-radius:15px; width: 8%; height: 8%; text-align: center; margin-right: 7%;">로그인</a>
         </div>
-
-
     </nav>
     <!-- Navbar End -->
 
@@ -330,7 +429,7 @@
                         <div class="login-input">
                             <input name="user_id" placeholder="아이디" id="userId" type="text"
                                    style=" width:238px; height: 50px; border-radius:10px; border: none; margin-right: 10px;font-family: 'TmoneyRoundWindExtraBold';">
-                            <button type="button" class="mem_ID" id="ID-Check-Btn"
+                            <button type="button" class="mem_ID" id="btnUserId"
                                     style="height: 50px; border-radius:10px; margin-left: 10px;font-family: 'TmoneyRoundWindExtraBold';  background-color: #FFFFFF;color:#0d6efd; border:2px solid #0d6efd;">
                                 중복확인
                             </button>
@@ -358,7 +457,7 @@
                             <!--                <option value="nate.com">nate.com</option>-->
                             <!--                <option value="direct">직접입력</option>-->
                             <!--            </select>-->
-                            <button type="button" class="mem_email" id="mail-Check-Btn"
+                            <button type="button" class="mem_email" id="btnEmail"
                                     style="height: 50px; border-radius:10px; margin-left: 8px; width:100px; font-family: 'TmoneyRoundWindExtraBold'; font-size: small; background-color: #FFFFFF;color:#0d6efd; border:2px solid #0d6efd;">
                                 이메일<br>인증
                             </button>
@@ -395,7 +494,6 @@
                     </form>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -425,16 +523,14 @@
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
 </div>
 <!-- Footer End -->
 
 <!-- Back to Top -->
 <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
-</div>
+
 
 
 </body>

@@ -1,15 +1,18 @@
 package kopo.poly.service.impl;
 
-import kopo.poly.dto.MsgDTO;
+import kopo.poly.dto.MailDTO;
 import kopo.poly.dto.UserInfoDTO;
 import kopo.poly.persistance.mapper.IUserMapper;
+import kopo.poly.service.IMailService;
 import kopo.poly.service.IUserService;
 import kopo.poly.util.CmmUtil;
+import kopo.poly.util.EncryptUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Service
@@ -17,6 +20,7 @@ import java.util.Optional;
 public class UserService implements IUserService {
 
     private final IUserMapper userMapper; // 회원관련 SQL 사용하기 위한 Mapper 가져오기
+    private final IMailService mailService; //메일 발송을 위한 MailService 자바 객체 가져오기
 
 
     @Override
@@ -58,6 +62,69 @@ public class UserService implements IUserService {
 
         return rDTO;
     }
+    //private final IMailService mailService; //메일 발송을 위한 MailService 자바 객체 가져오기
+
+    @Override
+    public UserInfoDTO getUserIdExists(UserInfoDTO pDTO) throws Exception {
+
+        log.info(this.getClass().getName() + ".getUserIdExists Start!");
+
+        UserInfoDTO rDTO = userMapper.getUserIdExists(pDTO);
+
+        log.info(this.getClass().getName() + ".getUserIdExists End!");
+
+        return rDTO;
+
+    }
+
+    @Override
+    public UserInfoDTO getEmailExists(UserInfoDTO pDTO) throws Exception {
+
+        log.info(this.getClass().getName() + ".emailAuth Start!");
+        log.info("pdto email : " + pDTO.getEmail());
+
+        //DB 이메일이 존재하는지 SQL 쿼리 실행
+        //SQL 쿼리에 COUNT()를 사용하기 때문에 반드시 조회 결과는 존재함
+        UserInfoDTO rDTO = userMapper.getEmailExists(pDTO);
+        if (rDTO == null) {
+            rDTO = new UserInfoDTO();
+        }
+
+        String existsYn = CmmUtil.nvl(rDTO.getExists_yn());
+
+        log.info("existsYn" + existsYn);
+
+        if(existsYn.equals("N")) {
+            //6자리 랜덤 숫자 생성하기
+            int authNumber = ThreadLocalRandom.current().nextInt(100000,1000000);
+
+            log.info("authNumber : " + authNumber);
+
+            //인증번호 발송 로직
+            MailDTO dto = new MailDTO();
+
+            dto.setTitle("이메일 중복확인 인증 번호 발송 메일");
+            dto.setContents("인증번호는 " + authNumber + " 입니다.");
+            dto.setToMail(EncryptUtil.decAES128CBC(CmmUtil.nvl(pDTO.getEmail())));
+
+            mailService.doSendMail(dto); //이메일 발송
+
+            dto = null;
+            rDTO.setAuthNumber(authNumber); //인증 번호를 결과값에 넣어주기
+        }
+        log.info(this.getClass().getName() + ".emailAuth End!");
+
+        return rDTO;
+    }
+
+//    @Override
+//    public int insertUserInfo(UserInfoDTO pDTO) throws Exception {
+//        return 0;
+//    }
+
+
+}
+
 
 //    @Override
 //    public UserInfoDTO getUserIdExists(UserInfoDTO pDTO) throws Exception {
@@ -82,4 +149,4 @@ public class UserService implements IUserService {
 //
 //        return rDTO;
 //    }
-}
+

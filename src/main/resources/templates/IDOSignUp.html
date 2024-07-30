@@ -313,7 +313,7 @@
         }
 
         .form-control2 {
-            margin-top: 15px;
+            margin-top: 0px;
         }
 
         #signup {
@@ -413,7 +413,7 @@
 
         <div class="imgTest">
             <img class="img-fluid background" src="/img/IDOmainBackground.png" style="z-index: 1;" alt="">
-            <div id="input-box" style="z-index: 5;">
+            <div id="input-box" style="z-index: 5;padding-top: 20px;padding-bottom: 20px;">
                 <!--    <h2 class="signUpHeading" >회원가입</h2>-->
                 <div class="joinForm">
                     <!--    <form id="f">-->
@@ -433,21 +433,27 @@
                                     style="height: 50px; border-radius:10px; margin-left: 10px;font-family: 'TmoneyRoundWindExtraBold';  background-color: #FFFFFF;color:#0d6efd; border:2px solid #0d6efd;">
                                 중복확인
                             </button>
+
                         </div>
-                        <br>
+
+                        <div class="login-input">
+                            <input name="user_name" placeholder="이름" id="userName" type="text"
+                                   style=" width:340px; height: 50px; margin-top: 15px; border-radius:10px; border: none; margin-right: 10px;font-family: 'TmoneyRoundWindExtraBold';">
+                        </div>
+
                         <div class="login-input">
                             <input name="password" placeholder="비밀번호" id="userPassword" type="password"
-                                   style="width:340px; height: 50px; border-radius:10px; border: none; font-family: 'TmoneyRoundWindExtraBold';">
+                                   style="width:340px; height: 50px; margin-top: 15px; border-radius:10px; border: none; font-family: 'TmoneyRoundWindExtraBold';">
                         </div>
                         <div class="login-input">
                             <input name="password2" placeholder="비밀번호 확인" id="userPassword2" type="password"
-                                   style="width:340px; height: 50px; border-radius:10px; border: none; margin-top: 20px; font-family: 'TmoneyRoundWindExtraBold';">
+                                   style="width:340px; height: 50px; margin-top: 15px; border-radius:10px; border: none; margin-top: 20px; font-family: 'TmoneyRoundWindExtraBold';">
                         </div>
-                        <br>
+
                         <div class="login-input" style="display: flex; align-items: center;">
                             <input type="text" name="email" id="user_email" class="align-left" required
                                    placeholder="이메일 입력"
-                                   style="width:260px; height: 50px; border-radius:10px; border: none; margin-right: 10px; font-family: 'TmoneyRoundWindExtraBold';">
+                                   style="width:260px; height: 50px; margin-top: 15px; border-radius:10px; border: none; margin-right: 10px; font-family: 'TmoneyRoundWindExtraBold';">
                             <!--            <span id="middle"><small>@</small></span>-->
                             <!--            <select id="email_address" name="email_address" title="이메일 선택" class="email_address" style="width:100px; height: 50px; border-radius:10px; border: none; margin-left: 10px; margin-right: 10px;">-->
                             <!--                <option value="naver.com">naver.com</option>-->
@@ -458,36 +464,41 @@
                             <!--                <option value="direct">직접입력</option>-->
                             <!--            </select>-->
                             <button type="button" class="mem_email" id="btnEmail"
-                                    style="height: 50px; border-radius:10px; margin-left: 8px; width:100px; font-family: 'TmoneyRoundWindExtraBold'; font-size: small; background-color: #FFFFFF;color:#0d6efd; border:2px solid #0d6efd;">
+                                    style="height: 50px; border-radius:10px; margin-top: 15px; margin-left: 8px; width:100px; font-family: 'TmoneyRoundWindExtraBold'; font-size: small; background-color: #FFFFFF;color:#0d6efd; border:2px solid #0d6efd;">
                                 이메일<br>인증
                             </button>
                             <input type="hidden" id="mem_email" name="mem_email" value="">
                         </div>
 
+                        <div class="login-input" style="display: flex; align-items: center;">
+                            <input type="text" name="authNumber"  placeholder="메일로 발송된 인증번호"
+                                   style=" width:340px; height: 50px; margin-top: 15px; border-radius:10px; border: none; margin-right: 10px;font-family: 'TmoneyRoundWindExtraBold';">
+                        </div>
+
                         <div class="adressInput">
-                            <label for="zipp_btn" class="form-label"> </label><br/>
+                            <!--label for="zipp_btn" class="form-label"> </label-->
                             <input type="text" class="form-control mb-2" id="zipp_code_id" name="post_code"
                                    maxlength="10"
                                    placeholder="우편번호"
-                                   style="width:210px; height: 50px; border-radius:10px; border: none; display: inline;font-family: 'TmoneyRoundWindExtraBold';">
+                                   style="width:210px; height: 50px; margin-top: 15px; padding-left: 2px; border-radius:10px; border: none; display: inline;font-family: 'TmoneyRoundWindExtraBold';">
                             <!--                            <button type="button" id="zipp_btn" class="btn btn-primary" onclick="execDaumPostcode()"-->
                             <!--                                   value="우편번호 찾기"-->
                             <!--                                    style="height: 50px; width:100px;border-radius:10px;color:#000000; margin-left: 5px;font-family: 'TmoneyRoundWindExtraBold';  background-color: #FFFFFF"></button><br>-->
 
                             <button type="button" id="zipp_btn" class="mem_addres" onclick="execDaumPostcode()"
-                                    style="height: 50px; border-radius:10px; margin-left: 10px;font-family: 'TmoneyRoundWindExtraBold';  background-color: #FFFFFF;color:#0d6efd; border:2px solid #0d6efd;">
+                                    style="height: 50px; border-radius:10px; margin-top: 15px; margin-left: 10px;font-family: 'TmoneyRoundWindExtraBold';  background-color: #FFFFFF;color:#0d6efd; border:2px solid #0d6efd;">
                                 우편번호 찾기
                             </button>
                             <input type="text" class="form-control" name="address" id="UserAdd1" maxlength="40"
-                                   placeholder="기본 주소를 입력하세요" required
-                                   style="width:140px; height: 50px; border-radius:10px; border: none; display: inline;font-family: 'TmoneyRoundWindExtraBold';">
+                                   placeholder="기본 주소" required
+                                   style="width:140px; height: 50px; padding-left: 2px; border-radius:10px; border: none; display: inline;font-family: 'TmoneyRoundWindExtraBold';">
                             <input type="text" class="form-control2" name="dt_addr" id="UserAdd2" maxlength="40"
                                    placeholder="상세 주소를 입력하세요"
                                    style="width:185px; height: 50px; border-radius:10px; border: none; margin-left: 12px; display: inline;font-family: 'TmoneyRoundWindExtraBold';">
                         </div>
 
                         <button id="signup" type="submit"
-                                style="margin-top: 15px;  width: 260px; height: 55px; flex-shrink: 0; border-radius: 50px; border: none; background: #0d6efd; box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);font-family: 'TmoneyRoundWindExtraBold'; font-size:25px; margin-top: 40px; display: flex; justify-content: center; align-items:center; margin-left:9%;">
+                                style="margin-top: 15px;  width: 260px; height: 55px; flex-shrink: 0; border-radius: 50px; border: none; background: #0d6efd; box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);font-family: 'TmoneyRoundWindExtraBold'; font-size:25px; margin-top: 15px; display: flex; justify-content: center; align-items:center; margin-left:9%;">
                             회원가입
                         </button>
 
